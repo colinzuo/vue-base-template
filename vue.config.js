@@ -11,10 +11,12 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production'
     ? '/production-sub-path/'
     : '/',
+
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
+
   devServer: {
     port: port,
     overlay: {
@@ -29,6 +31,7 @@ module.exports = {
       }
     }
   },
+
   configureWebpack: {
     resolve: {
       alias: {
@@ -36,4 +39,8 @@ module.exports = {
       }
     }
   },
+
+  transpileDependencies: [
+    'vuetify'
+  ]
 }
