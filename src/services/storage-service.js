@@ -1,5 +1,6 @@
+import defaultSettings from '@/settings';
 
-export function createStorageService({keyPrefix}) {
+function createStorageService({keyPrefix}) {
   let storageService = new StorageService({keyPrefix});
 
   console.log(`created StorageService with keyPrefix ${keyPrefix}`, storageService);
@@ -13,7 +14,9 @@ function StorageService({keyPrefix}) {
   this.keyPrefix = keyPrefix;
 }
 
-const prototype = {
+StorageService.prototype = {
+  constructor: StorageService,
+
   loadInitialState() {
     return Object.keys(localStorage).reduce((state, storageKey) => {
       if (storageKey.includes(this.keyPrefix)) {
@@ -74,5 +77,6 @@ const prototype = {
   }
 };
 
-StorageService.prototype = prototype;
-StorageService.prototype.constructor = StorageService;
+export let storageService = createStorageService({
+  keyPrefix: defaultSettings.storageKeyPrefix,
+});

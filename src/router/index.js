@@ -1,14 +1,39 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Home from '../views/Home.vue';
 
-Vue.use(VueRouter)
+import HomeLayout from '@/layout/HomeLayout.vue';
+import NotLoginLayout from '@/layout/NotLoginLayout.vue';
 
-const routes = [
+Vue.use(VueRouter);
+
+const staticRoutes = [
+  {
+    path: '/auth',
+    component: NotLoginLayout,
+    redirect: '/auth/login',
+    hidden: true,
+    children: [
+      {
+        path: 'login',
+        component: () => import('@/views/auth/login'),
+        name: 'Login',
+        meta: { title: 'Login' }
+      }
+    ]
+  },
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    component: HomeLayout,
+    redirect: '/home',
+    children: [
+      {
+        path: 'home',
+        component: Home,
+        name: 'home',
+        meta: { title: 'Home' }
+      }
+    ]
   },
   {
     path: '/about',
@@ -21,7 +46,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  routes
+  routes: staticRoutes
 })
 
 export default router

@@ -8,6 +8,10 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+import './permission' // permission control
+
+console.log("main.js Enter")
+
 Vue.config.productionTip = false
 
 new Vue({
