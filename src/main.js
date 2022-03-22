@@ -4,6 +4,8 @@ import vuetify from './plugins/vuetify';
 
 import '@/styles/index.scss'; // global css
 
+import '@/services/default-init';
+
 import App from './App.vue';
 import router from './router';
 import store from './store';
