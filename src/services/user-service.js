@@ -9,7 +9,7 @@ class UserService {
   }
 
   formLogin(data) {
-    console.log('formLogin Enter');
+    console.log(`${this.tag} formLogin Enter`);
 
     // return apiFormLogin(data);
 
@@ -31,7 +31,7 @@ class UserService {
   }
 
   getUserInfo() {
-    console.log('getUserInfo Enter');
+    console.log(`${this.tag} getUserInfo Enter`);
 
     // return apiGetUserInfo();
 
@@ -48,24 +48,26 @@ class UserService {
   }
 
   register(data) {
-    console.log('register Enter')
+    console.log(`${this.tag} register Enter`)
 
     return apiRegister(data)
   }
 
   requestIdCode(data) {
-    console.log('requestIdCode Enter')
+    console.log(`${this.tag} requestIdCode Enter`)
 
     return apiRequestIdCode(data)
   }
 
   logout(data) {
-    console.log('logout Enter')
+    console.log(`${this.tag} logout Enter`)
 
     return apiLogout(data)
   }
 }
 
 export let userService = new UserService({
-  tag: 'default'
+  tag: 'default UserService'
 });
+
+console.log('After Create UserService');

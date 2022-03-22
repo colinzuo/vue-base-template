@@ -72,7 +72,7 @@ const actions = {
         }
 
         commit('setRoles', roles);
-        commit('setUsername', username);
+        commit('setName', username);
 
         resolve(data)
       }).catch(error => {

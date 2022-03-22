@@ -9,7 +9,7 @@ class AuthService {
   }
 
   getTokenInfo() {
-    console.log('getTokenInfo Enter');
+    console.log(`${this.tag} getTokenInfo Enter`);
 
     if (!this.tokenInfo) {
       this.tokenInfo = gStorageService.getItem(tokenInfoKey);
@@ -19,7 +19,7 @@ class AuthService {
   }
 
   setTokenInfo(tokenInfo) {
-    console.log('setTokenInfo Enter');
+    console.log(`${this.tag} setTokenInfo Enter`);
 
     gStorageService.setItem(tokenInfoKey, tokenInfo);
 
@@ -27,7 +27,7 @@ class AuthService {
   }
 
   removeTokenInfo() {
-    console.log('removeTokenInfo Enter');
+    console.log(`${this.tag}  removeTokenInfo Enter`);
 
     gStorageService.removeItem(tokenInfoKey);
 
@@ -36,5 +36,7 @@ class AuthService {
 }
 
 export let authService = new AuthService({
-  tag: 'default'
+  tag: 'default AuthService'
 });
+
+console.log('After Create AuthService');

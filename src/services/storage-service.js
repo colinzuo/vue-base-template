@@ -80,3 +80,5 @@ StorageService.prototype = {
 export let storageService = createStorageService({
   keyPrefix: defaultSettings.storageKeyPrefix,
 });
+
+console.log('After Create StorageService');

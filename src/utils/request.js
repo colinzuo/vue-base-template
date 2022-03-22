@@ -1,20 +1,20 @@
 import axios from 'axios'
 
-import store from '@/store'
+let store = null;
 
 // create an axios instance
-const service = axios.create({
+const instance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 10000 // request timeout
 })
 
 // request interceptor
-service.interceptors.request.use(
+instance.interceptors.request.use(
   config => {
     // do something before request is sent
 
-    if (store.getters.token) {
+    if (store?.getters.token) {
       config.headers['Authorization'] = `Bearer ${store.getters.token}`
     }
 
@@ -28,7 +28,7 @@ service.interceptors.request.use(
 )
 
 // response interceptor
-service.interceptors.response.use(
+instance.interceptors.response.use(
   /**
    * If you want to get http information such as headers or status
    * Please return  response => response
@@ -79,6 +79,10 @@ service.interceptors.response.use(
     // })
     return Promise.reject(error)
   }
-)
+);
 
-export default service
+export function setStore(value) {
+  store = value;
+}
+
+export default instance;
