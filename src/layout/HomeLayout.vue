@@ -32,6 +32,6 @@ export default {
 
 <style lang="scss" scoped>
 .layout-container {
-  height: 100%;
+  height: calc(100% - 64px);
 }
 </style>
