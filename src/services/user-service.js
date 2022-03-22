@@ -1,7 +1,7 @@
 // import { apiFormLogin, apiGetUserInfo, apiRegister,
 //   apiRequestIdCode, apiLogout } from '@/api/user';
 import { apiRegister,
-  apiRequestIdCode, apiLogout } from '@/api/user';
+  apiRequestIdCode } from '@/api/user';
 
 class UserService {
   constructor({tag}) {
@@ -59,10 +59,16 @@ class UserService {
     return apiRequestIdCode(data)
   }
 
-  logout(data) {
-    console.log(`${this.tag} logout Enter`)
+  logout() {
+    console.log(`${this.tag} logout Enter`);
 
-    return apiLogout(data)
+    // return apiLogout();
+
+    return new Promise((resolve) => {
+      let rspData = {};
+
+      resolve(rspData)
+    });
   }
 }
 

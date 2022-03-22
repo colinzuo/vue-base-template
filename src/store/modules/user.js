@@ -1,4 +1,5 @@
 import { gAuthService, gUserSerivce } from '@/services';
+import router from '@/router';
 
 const {token, expiredAt} = gAuthService.getTokenInfo() || {};
 
@@ -33,25 +34,17 @@ const mutations = {
 
 const actions = {
   // user form login
-  formLogin({ commit }, formLoginData) {
+  async formLogin({ commit }, formLoginData) {
     const { username, password } = formLoginData;
 
-    return new Promise((resolve, reject) => {
-      gUserSerivce.formLogin({ username, password })
-        .then(response => {
-          const { expiredAt, token } = response.data;
+    let response = await gUserSerivce.formLogin({ username, password });
 
-          commit('setExpiredAt', expiredAt);
-          commit('setToken', token);
+    const { expiredAt, token } = response.data;
 
-          gAuthService.setTokenInfo({ token, expiredAt });
+    commit('setExpiredAt', expiredAt);
+    commit('setToken', token);
 
-          resolve();
-        })
-        .catch(error => {
-          reject(error);
-        })
-    })
+    gAuthService.setTokenInfo({ token, expiredAt });
   },
 
   // get user info
@@ -82,31 +75,19 @@ const actions = {
   },
 
   // remove tokenInfo
-  resetTokenInfo({ commit }) {
-    return new Promise(resolve => {
-      commit('resetTokenInfo');
+  async resetTokenInfo({ commit }) {
+    commit('resetTokenInfo');
 
-      gAuthService.removeTokenInfo();
+    gAuthService.removeTokenInfo();
 
-      resolve();
-    })
+    router.push({name: 'login'});
   },
 
-  // // user logout
-  // logout({ commit, state }) {
-  //   return new Promise((resolve, reject) => {
-  //     logout(state.token).then(() => {
-  //       commit('SET_TOKEN', '')
-  //       commit('SET_ROLES', [])
-  //       removeToken()
-  //       // resetRouter()
-
-  //       resolve()
-  //     }).catch(error => {
-  //       reject(error)
-  //     })
-  //   })
-  // },
+  // user logout
+  async logout({ dispatch }) {
+    await gUserSerivce.logout();
+    await dispatch('resetTokenInfo');
+  },
 
   // // dynamically modify permissions
   // async changeRoles({ commit, dispatch }, role) {

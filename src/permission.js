@@ -6,8 +6,6 @@ import 'nprogress/nprogress.css' // progress bar style
 
 import getPageTitle from '@/utils/get-page-title'
 
-const whiteList = ['/auth/login', '/auth-redirect'] // no redirect whitelist
-
 router.beforeEach(async (to, from, next) => {
   console.log(`global beforeEach Enter for ${to.path}`)
 
@@ -21,9 +19,9 @@ router.beforeEach(async (to, from, next) => {
   const token = store.state.user.token
 
   if (token) {
-    if (to.path === '/auth/login') {
+    if (to.name === 'login') {
       // if is logged in, redirect to the home page
-      next({ path: '/' })
+      next({ name: 'home' })
       NProgress.done() // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
     } 
     else {
@@ -48,7 +46,8 @@ router.beforeEach(async (to, from, next) => {
 
           // hack method to ensure that addRoutes is complete
           // set the replace: true, so the navigation will not leave a history record
-          next({ ...to, replace: true })
+          // next({ ...to, replace: true })
+          next();
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetTokenInfo')
@@ -60,8 +59,7 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     /* has no token*/
-    if (whiteList.indexOf(to.path) !== -1) {
-      // in the free login whitelist, go directly
+    if (!to.matched.some(record => record.meta.requiresAuth)) {
       next()
     } else {
       console.log(`need token to access ${to.path}, redirect to login page`)
