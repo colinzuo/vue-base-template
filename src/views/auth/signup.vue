@@ -24,7 +24,7 @@
           ></v-text-field>
           <v-btn
             class="ml-4 request-id-code-btn"
-            :disabled="sendIdCodeDisabled || !!requestIdCodeEnableTime"
+            :disabled="sendIdCodeDisabled || loading || !!requestIdCodeEnableTime"
             @click="onClickSendIdCode"
           >
             <template v-if="requestIdCodeEnableTime">
@@ -85,7 +85,7 @@
 
 <script>
 import { validateEmail } from '@/utils/validate';
-import { gStorageService } from '@/services';
+import { gStorageService, gUserSerivce, gMessageService } from '@/services';
 
 const requestIdCodeKey = 'request-id-code';
 const minRequestIdCodeInterval = 60;
@@ -188,31 +188,54 @@ export default {
     validateField () {
       this.$refs.form.validate()
     },
-    onClickSendIdCode() {
-      this.lastRequestTime = new Date();
-      gStorageService.setItem(requestIdCodeKey, this.lastRequestTime.toJSON());
-      this.requestIdCodeEnableTime = `${minRequestIdCodeInterval}s`;
-      this.updateEnableTimeIntervalId = setInterval(this.onUpdateEnableTime, 1000);
+    async onClickSendIdCode() {
+      const requestIdCodeData = {
+        kind: 'email',
+        email: this.email,
+      };
+
+      try {
+        this.loading = true;
+
+        await gUserSerivce.requestIdCode(requestIdCodeData);
+
+        this.lastRequestTime = new Date();
+        gStorageService.setItem(requestIdCodeKey, this.lastRequestTime.toJSON());
+        this.requestIdCodeEnableTime = `${minRequestIdCodeInterval}s`;
+        this.updateEnableTimeIntervalId = setInterval(this.onUpdateEnableTime, 1000);
+      } finally {
+        this.loading = false;
+      }
     },
-    onClickSignup() {
+    async onClickSignup() {
       if (!this.valid) {
-        console.log('unexpected error: onClickSignup is called when valid is false')
+        console.error('unexpected error: onClickSignup is called when valid is false')
         return;
       }
 
-      let formLoginData = {
+      let signupData = {
         username: this.username,
         password: this.password,
+        email: this.email,
+        idCode: this.idCode,
       }
 
-      this.loading = true
-      this.$store.dispatch('user/formLogin', formLoginData)
-        .then(() => {
-          this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-        })
-        .finally(() => {
-          this.loading = false
-        })
+      try {
+        this.loading = true;
+
+        const rsp = await gUserSerivce.register(signupData);
+
+        if (rsp.error) {
+          gMessageService.add({
+            type: 'error',
+            message: rsp.error.detail,
+          });
+        } else {
+          this.$router.push({name: 'login'});
+        }
+      } finally {
+        this.loading = false;
+      }
     },
     onUpdateEnableTime() {
       const curTime = new Date();

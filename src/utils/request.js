@@ -1,4 +1,8 @@
-import axios from 'axios'
+import axios from 'axios';
+
+import { gMessageService } from '@/services';
+
+import { translateError } from './translate';
 
 let store = null;
 
@@ -13,6 +17,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   config => {
     // do something before request is sent
+    console.log(`token ${store?.getters.token}`, store);
 
     if (store?.getters.token) {
       config.headers['Authorization'] = `Bearer ${store.getters.token}`
@@ -43,12 +48,10 @@ instance.interceptors.response.use(
     const res = response.data
 
     if (res.error) {
-      // TBD: publish to error stream
-      // Message({
-      //   message: res.message || 'Error',
-      //   type: 'error',
-      //   duration: 5 * 1000
-      // })
+      gMessageService.add({
+        type: 'error',
+        message: translateError(res.error),
+      });
 
       // let error = res.error
 
@@ -65,19 +68,20 @@ instance.interceptors.response.use(
       //     })
       //   })
       // }
-      return Promise.reject(new Error(res.message || 'Error'))
+      return Promise.reject(res);
     } else {
-      return res
+      return res;
     }
   },
   error => {
-    console.log('err' + error) // for debug
-    // Message({
-    //   message: error.message,
-    //   type: 'error',
-    //   duration: 5 * 1000
-    // })
-    return Promise.reject(error)
+    console.log('err' + error); // for debug
+
+    gMessageService.add({
+      type: 'error',
+      message: error.message,
+    });
+
+    return Promise.reject(error);
   }
 );
 

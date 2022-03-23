@@ -95,27 +95,28 @@ export default {
   },
   methods: {
     validateField () {
-      this.$refs.form.validate()
+      this.$refs.form.validate();
     },
-    onClickLogin() {
+    async onClickLogin() {
       if (!this.valid) {
-        console.log('unexpected error: onClickLogin is called when valid is false')
+        console.log('unexpected error: onClickLogin is called when valid is false');
         return;
       }
 
       let formLoginData = {
         username: this.username,
         password: this.password,
-      }
+      };
 
-      this.loading = true
-      this.$store.dispatch('user/formLogin', formLoginData)
-        .then(() => {
-          this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-        })
-        .finally(() => {
-          this.loading = false
-        })
+      try {
+        this.loading = true;
+
+        await this.$store.dispatch('user/formLogin', formLoginData);
+
+        this.$router.push({ path: this.redirect || '/', query: this.otherQuery });
+      } finally {
+        this.loading = false;
+      }
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

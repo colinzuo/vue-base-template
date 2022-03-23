@@ -1,7 +1,5 @@
-// import { apiFormLogin, apiGetUserInfo, apiRegister,
-//   apiRequestIdCode, apiLogout } from '@/api/user';
-import { apiRegister,
-  apiRequestIdCode } from '@/api/user';
+import { apiFormLogin, apiGetUserInfo, apiRegister,
+  apiRequestIdCode, apiLogout } from '@/api/user';
 
 class UserService {
   constructor({tag}) {
@@ -11,40 +9,13 @@ class UserService {
   formLogin(data) {
     console.log(`${this.tag} formLogin Enter`);
 
-    // return apiFormLogin(data);
-
-    return new Promise((resolve) => {
-      console.log(`reqData ${data}`)
-
-      let expiredAt = new Date();
-      expiredAt.setDate(expiredAt.getDate() + 1);
-
-      let rspData = {
-        data: {
-          token: '12345678901234561234567890123456',
-          expiredAt: expiredAt.toISOString(),
-        },
-      }
-
-      resolve(rspData)
-    });
+    return apiFormLogin(data);
   }
 
   getUserInfo() {
     console.log(`${this.tag} getUserInfo Enter`);
 
-    // return apiGetUserInfo();
-
-    return new Promise((resolve) => {
-      let rspData = {
-        data: {
-          username: 'admin',
-          roles: ['sysadmin'],
-        },
-      }
-
-      resolve(rspData)
-    });
+    return apiGetUserInfo();
   }
 
   register(data) {
@@ -62,13 +33,7 @@ class UserService {
   logout() {
     console.log(`${this.tag} logout Enter`);
 
-    // return apiLogout();
-
-    return new Promise((resolve) => {
-      let rspData = {};
-
-      resolve(rspData)
-    });
+    return apiLogout();
   }
 }
 

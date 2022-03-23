@@ -24,8 +24,8 @@ module.exports = {
       errors: true
     },
     proxy: {
-      '^/api': {
-        target: '<url>',
+      '/zhiyoufy-api': {
+        target: 'http://localhost:8080',
         ws: true,
         changeOrigin: true
       }

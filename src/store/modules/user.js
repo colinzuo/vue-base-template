@@ -48,30 +48,26 @@ const actions = {
   },
 
   // get user info
-  getUserInfo({ commit }) {
-    return new Promise((resolve, reject) => {
-      gUserSerivce.getUserInfo().then(response => {
-        const { data } = response;
+  async getUserInfo({ commit }) {
+    const response = await gUserSerivce.getUserInfo();
 
-        if (!data) {
-          reject('Verification failed, please Login again.');
-        }
+    const { data } = response;
 
-        const { roles, username } = data;
+    if (!data) {
+      throw new Error('Verification failed, please Login again.');
+    }
 
-        // roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
-          reject('getUserInfo: roles must be a non-null array!');
-        }
+    const { roles, username } = data;
 
-        commit('setRoles', roles);
-        commit('setName', username);
+    // roles must be a non-null array
+    if (!roles) {
+      throw new Error('getUserInfo: roles must be a non-null array!');
+    }
 
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
+    commit('setRoles', roles);
+    commit('setName', username);
+
+    return data;
   },
 
   // remove tokenInfo
