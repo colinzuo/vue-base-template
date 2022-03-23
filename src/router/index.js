@@ -1,9 +1,13 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '../views/Home.vue';
 
 import AuthLayout from '@/layout/AuthLayout.vue';
 import MainLayout from '@/layout/MainLayout.vue';
+
+import Login from '@/views/auth/login';
+import Signup from '@/views/auth/signup';
+
+import Home from '../views/Home.vue';
 
 Vue.use(VueRouter);
 
@@ -16,13 +20,13 @@ const staticRoutes = [
     children: [
       {
         path: 'login',
-        component: () => import('@/views/auth/login'),
+        component: Login,
         name: 'login',
         meta: { title: 'Login' }
       },
       {
         path: 'signup',
-        component: () => import('@/views/auth/login'),
+        component: Signup,
         name: 'signup',
         meta: { title: 'Signup' }
       },
