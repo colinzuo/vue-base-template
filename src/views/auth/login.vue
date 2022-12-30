@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'Login',
   data() {
@@ -53,6 +55,11 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      old_username: state => state.user.name,
+      old_password: state => state.user.password,
+    }),
+
     usernameRules() {
       const rules = [
         v => !!v || 'Username is required',
@@ -86,12 +93,20 @@ export default {
   },
   created() {
     // window.addEventListener('storage', this.afterQRScan)
+
+    if(this.old_username != null) {
+      this.username = this.old_username;
+    }
+
+    if(this.old_password != null) {
+      this.password = this.old_password;
+    }
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    this.$refs.username.focus();
+    setTimeout(() => this.passwordShow = false, 1000);
   },
   methods: {
     validateField () {
@@ -112,6 +127,8 @@ export default {
         this.loading = true;
 
         await this.$store.dispatch('user/formLogin', formLoginData);
+
+        console.log("login ok")
 
         this.$router.push({ path: this.redirect || '/', query: this.otherQuery });
       } finally {

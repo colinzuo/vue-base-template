@@ -36,4 +36,6 @@ export let messageService = new MessageService({
   tag: 'default MessageService'
 });
 
+export let gMessageService = messageService;
+
 console.log('After Create MessageService');

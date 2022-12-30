@@ -17,7 +17,6 @@ const instance = axios.create({
 instance.interceptors.request.use(
   config => {
     // do something before request is sent
-    console.log(`token ${store?.getters.token}`, store);
 
     if (store?.getters.token) {
       config.headers['Authorization'] = `Bearer ${store.getters.token}`
@@ -74,12 +73,18 @@ instance.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error); // for debug
+    console.log('err' + error, error); // for debug
 
     gMessageService.add({
       type: 'error',
       message: error.message,
     });
+
+    if (error.response.status == 401) {
+      store.dispatch('user/resetTokenInfo').then(() => {
+              location.reload()
+            });
+    }
 
     return Promise.reject(error);
   }

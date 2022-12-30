@@ -1,34 +1,53 @@
-import { gAuthService, gUserSerivce } from '@/services';
+import { gAuthService, gUserService } from '@/services';
 import router from '@/router';
 
-const {token, expiredAt} = gAuthService.getTokenInfo() || {};
+const { token, expireAt } = gAuthService.getTokenInfo() || {};
+const { name } = gAuthService.getUserNameInfo() || {};
+const { password } = gAuthService.getPasswordInfo() || {};
 
 const state = {
-  expiredAt,
-  name: '',
-  roles: [],
+  isAdmin: false,
+  isSysAdmin: false,
+  roles: null,
+  name,
   token,
+  password,
+  expireAt,
 };
 
 const mutations = {
-  setExpiredAt: (state, expiredAt) => {
-    state.expiredAt = expiredAt;
+  setExpireAt: (state, expireAt) => {
+    state.expireAt = expireAt;
   },
   setName: (state, name) => {
     state.name = name;
   },
+  setPassword: (state, password) => {
+    state.password = password;
+  },
   setRoles: (state, roles) => {
     state.roles = roles;
+
+    state.isAdmin = roles.some(role => {
+      return role === 'admin';
+    });
+
+    state.isSysAdmin = roles.some(role => {
+      return role === 'sysAdmin';
+    });
   },
   setToken: (state, token) => {
     state.token = token;
   },
 
   resetTokenInfo: (state) => {
-    state.expiredAt = '';
+    state.expireAt = '';
+    state.isAdmin = false;
+    state.isSysAdmin = false;
     state.name = '';
-    state.roles = [];
+    state.roles = null;
     state.token = '';
+    state.password = '';
   },
 };
 
@@ -37,19 +56,23 @@ const actions = {
   async formLogin({ commit }, formLoginData) {
     const { username, password } = formLoginData;
 
-    let response = await gUserSerivce.formLogin({ username, password });
+    let response = await gUserService.formLogin({ username, password });
 
-    const { expiredAt, token } = response.data;
+    const { expireAt, token } = response.data;
 
-    commit('setExpiredAt', expiredAt);
+    commit('setExpireAt', expireAt);
     commit('setToken', token);
+    commit('setName', username);
+    commit('setPassword', password);
 
-    gAuthService.setTokenInfo({ token, expiredAt });
+    gAuthService.setTokenInfo({ token, expireAt });
+    gAuthService.setUserNameInfo({ 'name': username });
+    gAuthService.setPasswordInfo({ password });
   },
 
   // get user info
   async getUserInfo({ commit }) {
-    const response = await gUserSerivce.getUserInfo();
+    const response = await gUserService.getUserInfo();
 
     const { data } = response;
 
@@ -76,13 +99,21 @@ const actions = {
 
     gAuthService.removeTokenInfo();
 
-    router.push({name: 'login'});
+    router.push({ name: 'login' });
   },
 
   // user logout
   async logout({ dispatch }) {
-    await gUserSerivce.logout();
+    try {
+      await gUserService.logout();
+    } catch {
+      console.log('logout met exception');
+    }
+
     await dispatch('resetTokenInfo');
+
+    // clear cache
+    location.reload();
   },
 
   // // dynamically modify permissions

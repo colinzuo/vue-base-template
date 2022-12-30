@@ -85,7 +85,7 @@
 
 <script>
 import { validateEmail } from '@/utils/validate';
-import { gStorageService, gUserSerivce, gMessageService } from '@/services';
+import { gStorageService, gUserService, gMessageService } from '@/services';
 
 const requestIdCodeKey = 'request-id-code';
 const minRequestIdCodeInterval = 60;
@@ -197,7 +197,7 @@ export default {
       try {
         this.loading = true;
 
-        await gUserSerivce.requestIdCode(requestIdCodeData);
+        await gUserService.requestIdCode(requestIdCodeData);
 
         this.lastRequestTime = new Date();
         gStorageService.setItem(requestIdCodeKey, this.lastRequestTime.toJSON());
@@ -223,7 +223,7 @@ export default {
       try {
         this.loading = true;
 
-        const rsp = await gUserSerivce.register(signupData);
+        const rsp = await gUserService.register(signupData);
 
         if (rsp.error) {
           gMessageService.add({

@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Zhiyoufy',
-  storageKeyPrefix: 'Zhiyoufy-',
-  apiPrefix: '/zhiyoufy-api/v1',
+  title: 'Vue Base Template',
+  storageKeyPrefix: 'VueBaseTemplate-',
+  apiPrefix: '/vue-base-template-api/v1',
 }

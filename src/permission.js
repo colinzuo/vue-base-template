@@ -4,7 +4,8 @@ import store from './store'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 
-import getPageTitle from '@/utils/get-page-title'
+import getPageTitle from '@/utils/get-page-title';
+import { hasRoutePermission } from '@/utils/permission';
 
 router.beforeEach(async (to, from, next) => {
   console.log(`global beforeEach Enter for ${to.path}`)
@@ -25,36 +26,21 @@ router.beforeEach(async (to, from, next) => {
       NProgress.done() // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
     } 
     else {
-      const hasRoles = store.getters.roles && store.getters.roles.length > 0
+      let roles = store.getters.roles;
 
-      if (hasRoles) {
-        next()
-      } else {
+      if (!roles) {
         try {
-          // get user info
-          // note: roles must be a object array! 
-          // such as: ['admin'] or ,['developer','editor']
-          const { roles } = await store.dispatch('user/getUserInfo');
-
-          console.log(`roles: ${roles}`);
-
-          // // generate accessible routes map based on roles
-          // const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
-
-          // // dynamically add accessible routes
-          // router.addRoutes(accessRoutes)
-
-          // hack method to ensure that addRoutes is complete
-          // set the replace: true, so the navigation will not leave a history record
-          // next({ ...to, replace: true })
-          next();
-        } catch (error) {
-          // remove token and go to login page to re-login
-          await store.dispatch('user/resetTokenInfo')
-          // Message.error(error || 'Has Error')
-          next(`/auth/login?redirect=${to.path}`)
-          NProgress.done()
+          await store.dispatch('user/getUserInfo');
+        } catch (err) {
+          store.dispatch('user/resetTokenInfo');
         }
+      }
+
+      if (hasRoutePermission(to)) {
+        next();
+      } else {
+        next({name: 'page-forbidden', replace: true});
+        NProgress.done();
       }
     }
   } else {

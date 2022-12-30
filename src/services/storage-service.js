@@ -81,4 +81,6 @@ export let storageService = createStorageService({
   keyPrefix: defaultSettings.storageKeyPrefix,
 });
 
+export let gStorageService = storageService;
+
 console.log('After Create StorageService');

@@ -13,12 +13,14 @@
     "axios": "^0.26.1",
     "core-js": "^3.6.5",
     "nprogress": "^0.2.0",
+    "uuid": "^9.0.0",
     "vue": "^2.6.14",
     "vue-router": "^3.5.3",
     "vuetify": "^2.6.3",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
+    "@mdi/font": "^7.0.96",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-e2e-cypress": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
